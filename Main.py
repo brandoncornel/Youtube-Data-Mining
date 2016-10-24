@@ -3,20 +3,23 @@ import os
 import math
 import matplotlib.pyplot as plt
 from collections import Counter
-import numpy
+import numpy as np
 import glob
 
 dir = os.path.dirname(__file__)
 
 class Main:
+    categoryDict = {"Entertainment": 0}
     def main(self):
-        self.dataSetInformationParse()
-        path = "datasets/080725"
-        filename = os.path.join(path, '0.txt')
-        with open(filename, 'r') as f:
-            for line in f:
-                print line
 
+        self.dataSetInformationParse()
+        #path = "datasets/080725"
+        #filename = os.path.join(path, '0.txt')
+        info = []
+        #with open(filename, 'r') as f:
+        #    for line in f:
+        #        info.append(line.split("\t"))
+        #print info[0][1]
 
     def dataSetInformationParse(self):
         print "Parsing and Graphing Dataset Information..."
@@ -42,20 +45,26 @@ class Main:
         plt.title('Number of Videos Crawled')
         plt.legend()
         plt.show()
-
-        #for row in rows:
-            #self.parseEachFolder(int(row[0]), row[1])
+        for row in rows:
+            self.parseEachFolder(int(row[0]), row[1])
+        plt.bar(range(len(self.categoryDict)), self.categoryDict.values(), align='center')
+        plt.xticks(range(len(self.categoryDict)), self.categoryDict.keys(),rotation=60)
+        plt.show()
 
     def parseEachFolder(self, ID, folderName):
         print "Parsing and Graphing for crawl ID", ID
         rows = []
         path = "datasets/"+ folderName
-        #for filename in glob.iglob(os.path.join(path, '*.txt')):
-            #with open(filename) as f:
-                #for line in f:
-        filename = os.path.join(path, 'Dataset_Information.csv')
-
-
-
+        info = []
+        for filename in glob.iglob(os.path.join(path, '*.txt')):
+            with open(filename) as f:
+                for line in f:
+                    info.append(line.split("\t"))
+        for data in info:
+            if(len(data)>=3):
+                if(data[3].replace("&amp;","&").replace(" ", "\n") in self.categoryDict):
+                    self.categoryDict[data[3].replace("&amp;","&").replace(" ", "\n")]+=1
+                else:
+                    self.categoryDict[data[3].replace("&amp;","&").replace(" ", "\n")] = 1
 
 Main().main()
